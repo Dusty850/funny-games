@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Menu</title>
     <style>
         /* Hidden by default until password is correct */
@@ -26,17 +27,19 @@
             padding: 20px;
         }
 
+        /* Using buttons now for the launcher function */
         .game-card {
             display: block;
             padding: 40px 20px;
             background: #333;
             color: white;
-            text-decoration: none;
             border-radius: 8px;
             border: 2px solid transparent;
             transition: all 0.3s ease;
             font-weight: bold;
             font-size: 1.2rem;
+            cursor: pointer;
+            width: 100%;
         }
 
         .game-card:hover {
@@ -45,25 +48,50 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
+
+        h1 { color: #00bfff; }
     </style>
 
     <script>
         function checkPassword() {
-            // Set your password here
             const secret = "chicken nugget"; 
             const entry = prompt("Enter the password to access this site:");
 
             if (entry === secret) {
-                // Show the games if correct
                 document.getElementById('main-content').style.display = 'block';
             } else {
-                // Kick them out or show error if wrong
                 alert("Wrong password lol.");
                 document.body.innerHTML = "<h1 style='margin-top:100px;'>Refresh to attempt the password again.</h1>";
             }
         }
 
-        // Trigger the password box as soon as the page loads
+        // The "about:blank" magic function
+        async function launchGame(url) {
+            try {
+                // Fetch the code from your local html file
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("File not found");
+                
+                const htmlContent = await response.text();
+
+                // Open a new blank tab
+                const win = window.open('about:blank', '_blank');
+                
+                if (win) {
+                    // Inject the code into the new tab
+                    win.document.open();
+                    win.document.write(htmlContent);
+                    win.document.close();
+                } else {
+                    alert("Pop-up blocked! Please allow pop-ups for this site.");
+                }
+            } catch (err) {
+                alert("Error loading game. Make sure the file name is correct and you are using a server (Live Server or GitHub)!");
+                console.error(err);
+            }
+        }
+
+        // Run password check on load
         window.onload = checkPassword;
     </script>
 </head>
@@ -74,10 +102,8 @@
         <p>Enjoy the games :D</p>
 
         <div class="grid-container">
-            <a href="minecraft.html" target="_blank" class="game-card">⛏️ Minecraft</a>
-            <a href="subwaysurfers.html" target="_blank" class="game-card">🚆 Subway Surfers</a>
-            <a href="game3/index.html" target="_blank" class="game-card">🍄 Platformer</a>
-            <a href="game4/index.html" target="_blank" class="game-card">🧩 Puzzle Lab</a>
+            <button onclick="launchGame('minecraft.html')" class="game-card">⛏️ Minecraft</button>
+            <button onclick="launchGame('subwaysurfers.html')" class="game-card">🚆 Subway Surfers</button>
         </div>
     </div>
 
